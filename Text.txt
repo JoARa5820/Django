@@ -1,0 +1,92 @@
+## python3 manage.py 쓰면 실행이 안됨(python manage.py 사용)
+
+--------------------------------------------------------------------------------
+
+C:\Users\82109\Desktop\Django> python manage.py
+C:\Users\82109\Desktop\Django> python manage.py runserver
+C:\Users\82109\Desktop\Django> python manage.py runserver 8888
+
+--------------------------------------------------------------------------------
+
+앱 만들때는
+
+C:\Users\82109\Desktop\Django> django-admin startapp myapp
+
+실행하면 myapp 폴더가 생기고, 그 안에 여러 파일이 생김
+이 파일들을 구현하는 것을 통해서 구체적인 앱을 만들어가는것임
+
+--------------------------------------------------------------------------------
+
+urlpatterns를 반드시 정의해야함
+urlpatterns 리스트 안에는 라우팅과 관련된 정보가 적혀있어야함
+
+path('admin/', admin.site.urls), << 'admin/'란, 장고가 기본적으로 가지고 있는 관리자 화면으로 이동하기 위한 라우팅 설정임
+
+"""
+# 현재 urls.py가 아닌 다른 urls.py로 위임하려면 어떻게 해야하는지? :
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+
+path('', include('myapp.urls')) : 위임하고자 하는 앱의 이름(myapp)을 적어주면 됨
+myapp.urls : myapp(앱이름) 안의 urls.py를 사용하겠다
+
+--------------------------------------------------------------------------------
+
+# path의 앞쪽에 입력되있는 값은 url 주소이고, 뒷쪽에 입력되있는 값은 views.py 파일에 정의되어있는 함수명임
+path('', views.index), : http://127.0.0.1:8000
+path('create/', views.create), : http://127.0.0.1:8000/create/
+path('read/1/', views.read) : http://127.0.0.1:8000/read/1/
+
+# 페이지의 가변값은 <>로 받아올 수 있음
+path('read/<id>/', views.read)
+views.py 파일의 read 함수에서 두번째 인자로 id값을 받아들임
+
+--------------------------------------------------------------------------------
+
+##### 정리 #####
+'/read/1' 주소를 받아오려고 하면
+주소를 Web_Study의 urls.py파일에서 'urlpatterns' 리스트에서 찾아보고, 이 경우 '/read/1'은 'admin/'가 아니기 때문에 path('', include('myapp.urls'))로 감
+myapp의 urls.py에 위임한다는 것을 확인했으면, myapp의 urls.py 파일로 간 후
+다시 urlpatterns에서 리스트 값을 확인
+path('read/<id>/', views.read)를 확인했기 때문에, views.py 파일의 read 함수를 확인하고, return값을 리스폰스 해줌
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
