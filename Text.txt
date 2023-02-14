@@ -52,41 +52,12 @@ myapp의 urls.py에 위임한다는 것을 확인했으면, myapp의 urls.py 파
 다시 urlpatterns에서 리스트 값을 확인
 path('read/<id>/', views.read)를 확인했기 때문에, views.py 파일의 read 함수를 확인하고, return값을 리스폰스 해줌
 
+--------------------------------------------------------------------------------
 
+# CSRF : 장고가 가지고 있는 보안 기능
+# 기본 방식인 get 방식에서 post 방식 (method="post")으로 바꾸면 Forbidden(403) 페이지가 뜸. 그러나 이는 실습상 잘못된 것이 아님
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# def HTMLTemplate(articleTag, id=None):
+=> id 인자를 사용하는 HTMLTemplate와 사용하지 않는 HTMLTemplate가 공존할 때,
+id 인자를 사용하지 않는 HTMLTemplate의 두번째 파라미터에 id값을 입력해주지 않으면 에러가 나므로 id 값이 없을 때는 None을 넣어주도록 함
 

@@ -3,28 +3,49 @@
 # 우리가 처리한 결과를 client로 보내줄 때 return값으로 보내주는데, Http를 이용해서 응답하겠다는 의미에서 HttpResponse라는 객체를 이용함 / 이 객체를 이용하기 위해서는 import 해줘야함
 
 from django.shortcuts import render, HttpResponse
+import random
 
-# Create your views here.
+topics = [
+            {'id':1, 'title':'routing', 'body':'Routing is ..'},
+            {'id':2, 'title':'view', 'body':'View is ..'},
+            {'id':3, 'title':'model', 'body':'Model is ..'},
+]
+
+def HTMLTemplate(articleTag):
+    global topics
+    ol = ''
+    for topic in topics:
+        ol += f'<li><a href="/read/{topic["id"]}">{topic["title"]}</a></li>'
+    return f'''
+    <html>
+    <body>
+        <h1><a href="/">Django</a></h1>
+        <ol>
+            {ol}
+        </ol>
+        {articleTag}
+    </body>
+    </html>
+    '''
+
+
 def index(request):
-    return HttpResponse('Welcome!')
+    article = '''
+    <h2>Welcome</h2>
+    Hello, Django
+    '''
+    return HttpResponse(HTMLTemplate(article))
+
+
+def read(request, id):
+    global topics
+    article = ''
+    for topic in topics:
+        if topic['id'] == int(id):
+            article = f'<h2>{topic["title"]}</h2>{topic["body"]}'
+    return HttpResponse(HTMLTemplate(article))
+
 
 def create(request):
     return HttpResponse('Create')
-
-def read(request, id):
-    return HttpResponse('Read!' + id)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
