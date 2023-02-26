@@ -1,0 +1,186 @@
+Django란?
+Django는 파이썬 웹 프레임워크이다.
+앞서 배운 Flask에 비해 많은 기능들을 기본적으로 제공한다.
+웹을 개발하기 위한 대부분의 기능들을 제공하기 때문에, Django만으로도 규모가 있는 웹 서비스를 개발할 수 있다.
+Flask에 비해서 커뮤니티가 크고, 잘 활성화 되어있기 때문에 정보교류가 활발한 편이다.
+
+우리는 지금부터 Django를 사용해서 모든 웹서비스의 기본인 게시판을 구현해볼 것이다.
+대부분의 프레임워크가 그렇듯이 프레임워크의 구조를 낱낱이 파헤쳐서 이해하고 사용하는 것이 아니라.
+Django라는 프레임워크의 사용법을 익힌다고 생각하고 공부하는 것이 빠를 것이다.
+
+** https://wikidocs.net/91422
+
+--------------------------------------------------------------------------------------------------
+
+##### 첫 번째 Django프로젝트 시작하기
+
+$ pip install django
+$ django-admin startproject web_study
+$ cd web_study
+$ python manage.py migrate
+$ python manage.py runserver 
+$ python manage.py startapp main
+
+
+@ web_study/settings.py
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'main',
+]
+
+
+@ web_study/main/templates/main => index.html
+
+
+@ main/views.py => Create your views here.
+from django.shortcuts import render
+def index(request):
+    return render(request,'main/index.html')
+
+
+@ main/urls.py
+from django.urls import path
+from . import views
+urlpatterns = [
+    path('', views.index, name='index'),
+]
+
+
+@web_study/urls.py
+from django.contrib import admin
+from django.urls import path, include
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('main.urls')),
+]
+
+
+$ python manage.py runserver
+http://127.0.0.1:8000/
+
+
+--------------------------------------------------------------------------------------------------
+
+##### Django로 게시판 만들기 - 게시판 페이지
+
+@ web_study/main/templates/main/ => blog.html
+
+
+@ web_study/main/views.py
+from django.shortcuts import render
+# index.html 페이지를 부르는 index 함수
+def index(request):
+    return render(request, 'main/index.html')
+# blog.html 페이지를 부르는 blog 함수
+def blog(request):
+    return render(request, 'main/blog.html')
+
+
+@ main/urls.py
+from django.urls import path
+from .views import *
+app_name='main'
+urlpatterns=[
+    path('',index),
+    path('blog/',blog),
+]
+
+
+$ python manage.py runserver
+=> 127.0.0.1:8000/blog
+
+
+@ web_study/main/models.py
+from django.db import models
+# 게시글(Post)엔 제목(postname), 내용(contents)이 존재합니다
+class Post(models.Model):
+    postname = models.CharField(max_length=50)
+    contents = models.TextField()
+
+
+$ python manage.py makemigrations 
+$ python manage.py migrate
+
+
+@ web_study/main/admin.py
+from django.contrib import admin
+# 게시글(Post) Model을 불러옵니다
+from .models import Post
+# Register your models here.
+# 관리자(admin)가 게시글(Post)에 접근 가능
+admin.site.register(Post)
+
+
+$ python manage.py createsuperuser
+
+
+$ python3 manage.py runserver
+
+
+@ web_study/main/models.py
+from django.db import models
+# 게시글(Post)엔 제목(postname), 내용(contents)이 존재합니다
+class Post(models.Model):
+    postname = models.CharField(max_length=50)
+    contents = models.TextField()
+    # 게시글의 제목(postname)이 Post object 대신하기
+    def __str__(self):
+        return self.postname
+
+
+@ web_study/main/views.py
+from django.shortcuts import render
+# View에 Model(Post 게시글) 가져오기
+from .models import Post
+# index.html 페이지를 부르는 index 함수
+def index(request):
+    return render(request, 'main/index.html')
+# blog.html 페이지를 부르는 blog 함수
+def blog(request):
+    # 모든 Post를 가져와 postlist에 저장합니다
+    postlist = Post.objects.all()
+    # blog.html 페이지를 열 때, 모든 Post인 postlist도 같이 가져옵니다 
+    return render(request, 'main/blog.html', {'postlist':postlist})
+
+
+@ web_study/main/templates/main/blog.html
+
+
+@ web_study/main/views.py
+from django.shortcuts import render
+# View에 Model(Post 게시글) 가져오기
+from .models import Post
+# index.html 페이지를 부르는 index 함수
+def index(request):
+    return render(request, 'main/index.html')
+# blog.html 페이지를 부르는 blog 함수
+def blog(request):
+    # 모든 Post를 가져와 postlist에 저장
+    postlist = Post.objects.all()
+    # blog.html 페이지를 열 때, 모든 Post인 postlist도 같이 가져옴 
+    return render(request, 'main/blog.html', {'postlist':postlist})
+# blog의 게시글(posting)을 부르는 posting 함수
+def posting(request, pk):
+    # 게시글(Post) 중 pk(primary_key)를 이용해 하나의 게시글(post)를 검색
+    post = Post.objects.get(pk=pk)
+    # posting.html 페이지를 열 때, 찾아낸 게시글(post)을 post라는 이름으로 가져옴
+    return render(request, 'main/posting.html', {'post':post})
+
+
+@ web_study/main/urls.py
+
+
+@ web_study/main/templates/main/ => posting.html
+
+
+@ web_study/main/templates/main/blog.html
+
+
+@ web_study/main/templates/main/posting.html
+
+
