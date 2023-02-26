@@ -230,24 +230,54 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 @ web_study/main/templates/main/posting.html
 
 
+@ new_post.html
 
 
+@ main/views.py
+def new_post(request):
+    if request.method == 'POST':
+        if request.POST['mainphoto']:
+            new_article=Post.objects.create(
+                postname=request.POST['postname'],
+                contents=request.POST['contents'],
+                mainphoto=request.POST['mainphoto'],
+            )
+        else:
+            new_article=Post.objects.create(
+                postname=request.POST['postname'],
+                contents=request.POST['contents'],
+                mainphoto=request.POST['mainphoto'],
+            )
+        return redirect('/blog/')
+    return render(request, 'main/new_post.html')
 
 
+@ main/urls.py
+from web_study.main.views import new_post
+urlpatterns에 "path('blog/new_post/', new_post)," 추가
 
 
+@ main/blog.html
+<button><a href="new_post/">글쓰기</a></button> 추가
 
 
+@ main/views.py
+# 삭제버튼을 누르면 글이 삭제되도록 views를 구현
+def remove_post(request, pk):
+    post = Post.objects.get(pk=pk)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('/blog/')
+    return render(request, 'main/remove_post.html', {'Post': post})
 
 
+@ main/urls.py
+from main.views import index, blog, posting, new_post, remove_post
+"path('blog/<int:pk>/remove/', remove_post)," 추가
 
 
-
-
-
-
-
-
+@ posting.html
+삭제 버튼 생성 : <a href="/blog/{{post.pk}}/remove">삭제</a>
 
 
 

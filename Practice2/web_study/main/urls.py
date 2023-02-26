@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 # index는 대문, blog는 게시판
-from main.views import index, blog, posting
+from main.views import index, blog, posting, new_post, remove_post
 
 # 이미지를 업로드하자
 from django.conf.urls.static import static
@@ -15,6 +15,12 @@ urlpatterns = [
     path('blog/', blog, name='blog'),
     # URL:80/blog/숫자로 접속하면 게시글-세부페이지(posting)
     path('blog/<int:pk>/', posting, name='posting'),
+
+    # 아래 url 연결을 위해 함수("from web_study.main.views import new_post") 호출
+    path('blog/new_post/', new_post),
+
+    # 글마다 가지고 있는 primary key를 주소로 받아 remove_post뷰를 연결
+    path('blog/<int:pk>/remove/', remove_post),
 ]
 
 # 이미지 URL 설정
